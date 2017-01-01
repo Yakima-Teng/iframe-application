@@ -56,7 +56,7 @@ gulp.task('dev', ['globalLess', 'pageLess'], () => {
   gulp.watch(path.join(__dirname, 'pages', '**/*.less'), ['pageLess'])
   gulp.watch([
     path.join(__dirname, 'index.html'),
-    path.join(__dirname, 'scripts'),
+    path.join(__dirname, 'scripts', '*.js'),
     path.join(__dirname, 'pages', '**/*.html'),
     path.join(__dirname, 'pages', '**/*.js')
   ]).on('change', browserSync.reload)

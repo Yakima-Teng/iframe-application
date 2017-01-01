@@ -3,9 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- 国产360浏览器默认采用高速模式渲染页面 -->
+    <meta name="renderer" content="webkit">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>iframe application</title>
-
+    <link rel="shortcut icon" href="./favicon.ico" type="image-x-icon">
+    <link rel="stylesheet" href="./css/reset.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/importer.min.css">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -14,8 +18,27 @@
     <![endif]-->
   </head>
   <body>
-    <h1>你好，世界！</h1>
+    <nav id="menuWrapper" class="app-menu-wrapper">
+      <ul class="menus">
+        <li class="menu">
+          <span data-path="./pages/tree/index.html" class="title">无限嵌套</span>
+        </li>
+      </ul>
+    </nav>
+    <article class="app-iframe-wrapper">
+      <iframe id="appIframe" class="app-content-wrapper" src="./pages/tree/index.html" frameborder="0"></iframe>
+    </article>
+    <script src="./lib/jquery.min.js"></script>
+    <script src="./lib/handlebars-v4.0.5.min.js"></script>
+    <script>
+      var $menuWrapper = $('#menuWrapper')
+      var $appIframe = $('#appIframe')
 
-    <script src="lib/jquery.min.js"></script>
+      $menuWrapper.on('click', '.menu .title', function (e) {
+        var $this = $(this)
+        var targetPath = $this.data('path')
+        $appIframe.prop('src', targetPath)
+      })
+    </script>
   </body>
 </html>
