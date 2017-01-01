@@ -19,6 +19,8 @@
 
 设计中的目录结构：
 
+<pre>
+.
 index.html
 package.json
 gulpfile.js
@@ -44,7 +46,8 @@ less/
   reset.less
   importer.less
   utils-table.less
-
+.
+</pre>
 
 ## 参考资料
 
