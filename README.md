@@ -1,4 +1,7 @@
 # iframe-application
+
+注意：暂不可用。
+
 基于iframe实现的类似SPA的应用
 
 首先可以说，这个技术栈是比较“落伍”的了，但未必不常见。写这个脚手架的技术背景如下：
@@ -24,24 +27,24 @@
 index.html
 package.json
 gulpfile.js
-page/
-  hello/
+pages/
+  page1/
     index.html
     app.js
     importer.min.css
     importer.less
-  world/
+  page2/
     index.html
     app.js
     importer.min.css
     importer.less
 lib/
-  jquery.min.js
-  handlebars.min.js
 scripts/
   utils.js
 css/
   importer.min.css
+  reset.min.css
+  utils-table.min.css
 less/
   reset.less
   importer.less
