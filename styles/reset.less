@@ -1,11 +1,65 @@
+html {
+  height: 100%;
+  // 利用3D变形来开启GPU加速，以尽可能多的利用硬件能力
+  // 但是该样式会导致后代元素中的fixed定位异常，故不宜全局使用
+  // transform: translate3d(0, 0, 0);
+}
 body {
   margin: 0;
+  height: 100%;
+  font-family: "华文细黑", "微软雅黑", "Helvetica Neue", Helvetica, STHeiTi, sans-serif;
 }
 ul {
-  margin-top: 0;
-  margin-bottom: 0;
-  padding-left: 0;
+  margin: 0;
+  padding: 0;
 }
 li {
   list-style-type: none;
+}
+input, select, button {
+  border: 0;
+  padding: 0;
+  box-sizing: border-box;
+  appearance: none;
+  font-size: inherit;
+}
+button {
+  background-color: #fff;
+}
+:focus {
+  outline: none;
+}
+input:focus, select:focus {
+  outline: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: none;
+}
+th {
+  font-weight: normal;
+  text-align: left;
+}
+/* 修改chrome浏览器滚动条样式 */
+::-webkit-scrollbar-track-piece {
+  background-color:#fff;
+  -webkit-border-radius:0;
+}
+::-webkit-scrollbar {
+  width:8px;
+  height:8px;
+}
+::-webkit-scrollbar-thumb {
+  height:50px;
+  background-color:#999;
+  -webkit-border-radius:4px;
+  outline:2px solid #fff;
+  outline-offset:-2px;
+  border: 2px solid #fff;
+}
+::-webkit-scrollbar-thumb:hover {
+  height:50px;
+  background-color:#9f9f9f;
+  -webkit-border-radius:4px;
 }

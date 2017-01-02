@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html id="app">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cities</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="blank">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="author" content="Yakima Teng, cleveryun@163.com">
+  <link rel="shortcut icon" href="../../favicon.ico"/>
+  <noscript>您的浏览器不支持JavaScript或者JavaScript的运行被您禁止了。</noscript>
+  <link rel="stylesheet" href="../../css/normalize.min.css">
+  <link rel="stylesheet" href="../../css/font-awesome.min.css">
+  <link rel="stylesheet" href="./app.css">
+</head>
+<body>
+<div class="container">
+  <ul>
+    <li v-for="(key, value) in allCities" @click="toggleHighlight($index)" class="card transition-fast">
+      <div class="inner transition">
+        <header :class="{'transition-medium': isWalking}">
+          {{key}}
+          <i v-show="isWalking" class="fa fa-2x transition" :class="arrowDirections[$index] + ' ' + colorIndices[$index]"></i>
+        </header>
+        <article v-show="!isAnimating" class="transition-medium">
+          <ul>
+            <li v-for="item in value">{{item}}</li>
+          </ul>
+        </article>
+      </div>
+      <div class="canvas-container" v-show="key === '北京'">
+        <canvas @mouseover="colorTransition('mycanvas')" id="mycanvas" width="500" height="500"></canvas>
+      </div>
+    </li>
+  </ul>
+</div>
+<div class="mask loading" v-show="isLoading">
+  <div class="spinner">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+<div class="mask animating" v-show="isAnimating"></div>
+<script src="../../lib/jquery.min.js"></script>
+<script src="../../lib/vue.min.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>

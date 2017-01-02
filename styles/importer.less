@@ -1,0 +1,41 @@
+@import './utils.less';
+
+html, body {
+  height: 100%;
+}
+.app-main-container {
+  height: 100%;
+  background-color: skyblue;
+  .clearfix();
+}
+.app-menu-wrapper, .app-iframe-wrapper {
+  float: left;
+  position: relative;
+  min-height: 100%;
+}
+.app-menu-wrapper {
+  width: 100px;
+  background-color: gray;
+  z-index: 1;
+  .menu {
+    text-align: center;
+    .title {
+      display: block;
+      background-color: red;
+    }
+  }
+}
+.app-iframe-wrapper {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding-left: 100px;
+  margin-left: -100px;
+  z-index: 0;
+  .app-content-wrapper {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+  }
+}

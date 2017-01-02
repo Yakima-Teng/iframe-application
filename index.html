@@ -18,16 +18,24 @@
     <![endif]-->
   </head>
   <body>
-    <nav id="menuWrapper" class="app-menu-wrapper">
-      <ul class="menus">
-        <li class="menu">
-          <span data-path="./pages/tree/index.html" class="title">无限嵌套</span>
-        </li>
-      </ul>
-    </nav>
-    <article class="app-iframe-wrapper">
-      <iframe id="appIframe" class="app-content-wrapper" src="./pages/tree/index.html" frameborder="0"></iframe>
-    </article>
+    <div class="app-main-container">
+      <nav id="menuWrapper" class="app-menu-wrapper">
+        <ul class="menus">
+          <li class="menu">
+            <span data-path="./pages/rainbow/index.html" class="title">彩色条纹</span>
+          </li>
+          <li class="menu">
+            <span data-path="./pages/city/index.html" class="title">城市列表</span>
+          </li>
+          <li class="menu">
+            <span data-path="./pages/tree/index.html" class="title">无限嵌套</span>
+          </li>
+        </ul>
+      </nav>
+      <article class="app-iframe-wrapper">
+        <iframe id="appIframe" class="app-content-wrapper" src="./pages/city/index.html" frameborder="0"></iframe>
+      </article>
+    </div>
     <script src="./lib/jquery.min.js"></script>
     <script src="./lib/handlebars-v4.0.5.min.js"></script>
     <script>
