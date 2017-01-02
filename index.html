@@ -24,15 +24,15 @@
         <ul class="menus">
           <li class="menu">
             <i class="fa fa-glass"></i>
-            <span data-path="./pages/rainbow/index.html" class="title">彩色条纹</span>
+            <span data-path="./pages/rainbow/index.html" class="title">Vue作者博客的彩色条纹</span>
           </li>
-          <li class="menu">
+          <li class="menu active">
             <i class="fa fa-cog"></i>
-            <span data-path="./pages/city/index.html" class="title">城市列表</span>
+            <span data-path="./pages/city/index.html" class="title">不重复的颜色</span>
           </li>
           <li class="menu">
             <i class="fa fa-file-image-o"></i>
-            <span data-path="./pages/tree/index.html" class="title">无限嵌套</span>
+            <span data-path="./pages/tree/index.html" class="title">无限嵌套的勾选树</span>
           </li>
         </ul>
       </nav>
@@ -45,10 +45,13 @@
     <script>
       var $menuWrapper = $('#menuWrapper')
       var $appIframe = $('#appIframe')
+      var $menus = $('#menuWrapper .menu')
 
-      $menuWrapper.on('click', '.menu .title', function (e) {
+      $menuWrapper.on('click', '.menu', function (e) {
         var $this = $(this)
-        var targetPath = $this.data('path')
+        var targetPath = $this.find('.title').data('path')
+        $menus.removeClass('active')
+        $this.addClass('active')
         $appIframe.prop('src', targetPath)
       })
     </script>
