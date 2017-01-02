@@ -7,6 +7,7 @@ const proxyMiddleware = require('http-proxy-middleware')
 const changed = require('gulp-changed')
 const minifycss = require('gulp-clean-css')
 const path = require('path')
+const ghpages = require('gh-pages')
 
 // 将less目录下less指定的less文件编译后输出到css目录下
 gulp.task('globalLess', () => {
@@ -60,4 +61,26 @@ gulp.task('dev', ['globalLess', 'pageLess'], () => {
     path.join(__dirname, 'pages', '**/*.html'),
     path.join(__dirname, 'pages', '**/*.js')
   ]).on('change', browserSync.reload)
+})
+
+// 发布DEMO
+gulp.task('deploy', () => {
+  return ghpages.publish(__dirname, {
+    src: [
+      'index.html',
+      'scripts/**/*.js',
+      'pages/**/*.*',
+      'lib/**/*.js',
+      'img/**/*.*',
+      'fonts/**/*.*',
+      'css/**/*.css'
+    ]
+  }, err => {
+    if (err) {
+      console.log(err)
+      console.log('Failed deploying')
+      return
+    }
+    console.log('Finished deploying')
+  })
 })
