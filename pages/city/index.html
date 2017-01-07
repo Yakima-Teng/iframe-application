@@ -22,7 +22,7 @@
       <div class="inner transition">
         <header class="header" :class="{'transition-medium': isWalking}">
           {{key}}
-          <i v-show="isWalking" class="fa fa-2x transition" :class="arrowDirections[$index] + ' ' + colorIndices[$index]"></i>
+          <i class="fa fa-2x transition" :class="arrowDirections[$index] + ' ' + colorIndices[$index]"></i>
         </header>
         <article v-show="!isAnimating" class="transition-medium article">
           <ul>
