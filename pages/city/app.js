@@ -136,8 +136,8 @@ var app = new Vue({
       for (var i = 0; i < total; i++) {
         $cards.eq(i).not('.active-province').css(_this.originalPositions[i])
         if (i === _this.curCardsArrByEye[idx]) {
-          $cards.eq(i).not('.active-province').css('z-index', -1).hide(300, function () {
-            $(this).css('z-index', 1).fadeIn(300)
+          $cards.eq(i).not('.active-province').addClass('z-index-low').hide(300, function () {
+            $(this).removeClass('z-index-high').fadeIn(300)
           })
         }
       }
