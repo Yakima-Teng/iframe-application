@@ -216,6 +216,7 @@ var app = new Vue({
     var _this = this
     _this.setLayout()
     _this.walkingAround()
+    $('body').show()
     $(window).resize(function() {
       _this.setLayout()
     })
