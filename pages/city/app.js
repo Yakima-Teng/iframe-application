@@ -157,22 +157,6 @@ var app = new Vue({
 				if ($oldElement.hasClass('active-province')) $oldElement.removeClass('active-province');
 			}
 			this.curProvinceIndex = newProvinceIndex;
-			// if (!this.isWalking) {
-			//
-			//     // return;
-			// }
-			// if (!self.isSamePosition($newElement.css('left'), self.originalCardPositions[newProvinceIndex].left)) {
-			//     $newElement.css(self.originalCardPositions[newProvinceIndex]);
-			// }
-			// else {
-			//     $newElement.css({
-			//         top: self.windowHeight * 0.5 + 'px',
-			//         left: self.windowWidth * 0.5 + 'px'
-			//     });
-			// }
-
-			// if ($newElement.hasClass('active-province')) $newElement.removeClass('active-province');
-			// else $newElement.addClass('active-province');
 		},
 		setLayout: function() {
 			var i,
