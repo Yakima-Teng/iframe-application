@@ -148,8 +148,7 @@ var app = new Vue({
 			}
 			else {
 				$cards.removeClass('active-province').eq(newProvinceIndex).addClass('active-province').css({
-					top: self.windowHeight * 0.5 + 'px',
-					left: self.windowWidth * 0.5 + 'px'
+					transform: 'translate(-50%, -50%)'
 				});
 			}
 			if (newProvinceIndex !== oldProvinceIndex && !self.isSamePosition($oldElement.css('left'), self.originalCardPositions[oldProvinceIndex].left)) {
@@ -168,20 +167,17 @@ var app = new Vue({
 			self.windowHeight = $(window).height();
 			$('.card.active-province').removeClass('active-province');
 			for (i = 0; i < total; i++) {
+				var transX = 100 * (i % 8 - 4) + '%'
+				var transY = 100 * (Math.floor(i/8) - 2) + '%'
 				$cards.eq(i).css({
-					top: self.distanceY * 0.5 + self.distanceY * (Math.floor(i/8)) + 'px',
-					left: self.distanceX * 0.5 + self.distanceX * (i%8) + 'px'
+					transform: 'translate(' + transX + ',' + transY + ')'
 				});
 				self.originalCardPositions.push({
-					top: self.distanceY * 0.5 + self.distanceY * (Math.floor(i/8)) + 'px',
-					left: self.distanceX * 0.5 + self.distanceX * (i%8) + 'px'
+					transform: 'translate(' + transX + ',' + transY + ')'
 				});
 			}
 			this.curCardsArrByEye = [7,6,5,4,3,2,1,0,8,9,10,11,12,13,14,15,23,22,21,20,19,18,17,16,24,25,26,27,28,29,30];
 			this.indexOfCurLastCardByEye = 30;
-			// if (this.isWalking) {
-			//     this.walkAround();
-			// }
 		},
 		clickCard: function(cardIndex) {
 			var $cards = $('.card'),
@@ -386,7 +382,9 @@ var app = new Vue({
 				self.setLayout();
 			});
 			setTimeout(function() {
-				self.triggerAnimation();
+				self.isAnimating = false;
+				self.walkingAround();
+				// self.triggerAnimation();
 				// value of indexOfCurLastCardByEye variable is now 30
 				// self.setArrowDirections();
 			}, 600);
