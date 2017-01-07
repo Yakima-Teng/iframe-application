@@ -125,67 +125,6 @@ html, body, .container {
   }
 }
 
-.red {
-  transform: rotateY(0deg);
-  animation: yakimaRotateZ 300ms linear infinite;
-  // color: red;
-}
-.brown {
-  transform: rotateY(0deg);
-  animation: yakimaRotateZ 300ms linear infinite;
-  // color: #1c73d7;
-}
-.yellow {
-  transform: rotateZ(0deg);
-  animation: yakimaRotateZ 300ms linear infinite;
-  // color: yellow;
-}
-
-@keyframes yakimaRotateZ {
-  0% {
-    transform: rotateZ(0deg);
-  }
-  25% {
-    transform: rotateZ(-30deg);
-  }
-  75% {
-    transform: rotateZ(30deg);
-  }
-  100% {
-    transform: rotateZ(0deg);
-  }
-}
-
-.mask {
-  position: fixed;
-  z-index: 10;
-  top: 0;
-  left: 0;
-  display: none;
-  width: 100%;
-  height: 100%;
-}
-
-/*初始等待*/
-.loading {
-  z-index: 100;
-  display: block;
-  background-color: rgba(0, 0, 0, 1);
-}
-.spinner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #87ceeb;
-}
-
-/* animating */
-.animating {
-  z-index: 100;
-  display: block;
-}
-
 /* canvas */
 #mycanvas {
   position: absolute;

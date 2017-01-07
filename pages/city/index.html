@@ -20,28 +20,19 @@
   <ul class="ul">
     <li v-for="(key, value) in allCities" @click="toggleHighlight($index)" class="card transition-fast">
       <div class="inner transition">
-        <header class="header" :class="{'transition-medium': isWalking}">
-          {{key}}
-          <i class="fa fa-2x transition" :class="arrowDirections[$index] + ' ' + colorIndices[$index]"></i>
+        <header class="header">
+          {{$index + '.' + key}}
+          <i class="fa fa-2x transition" :class="arrowDirections[$index]"></i>
         </header>
-        <article v-show="!isAnimating" class="transition-medium article">
+        <article class="transition-medium article">
           <ul>
             <li class="li" v-for="item in value">{{item}}</li>
           </ul>
         </article>
       </div>
-      <div class="canvas-container" v-show="key === '北京'">
-        <canvas @mouseover="colorTransition('mycanvas')" id="mycanvas" width="500" height="500"></canvas>
-      </div>
     </li>
   </ul>
 </div>
-<div class="mask loading" v-show="isLoading">
-  <div class="spinner">
-    <i class="fa fa-spinner fa-pulse fa-5x"></i>
-  </div>
-</div>
-<div class="mask animating" v-show="isAnimating"></div>
 <script src="../../lib/jquery.min.js"></script>
 <script src="../../lib/vue.min.js"></script>
 <script src="./app.js"></script>
