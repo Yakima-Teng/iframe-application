@@ -106,7 +106,6 @@ var app = new Vue({
 		},
 		colorTransition: function(elementId) {
 			var self = this;
-			console.log(elementId);
 			var mycanvas = document.getElementById(elementId);
 			var ctx = mycanvas.getContext('2d');
 			ctx.clearRect(0,0,500,500);
@@ -144,7 +143,7 @@ var app = new Vue({
 			}
 			else {
 				$cards.removeClass('active-province').eq(newProvinceIndex).addClass('active-province').css({
-					transform: 'translate(-50%, -50%)'
+					transform: 'translate(-50%, -50%) rotateY(180deg)'
 				});
 			}
 			if (newProvinceIndex !== oldProvinceIndex && !self.isSamePosition($oldElement.css('left'), self.originalCardPositions[oldProvinceIndex].left)) {
@@ -291,6 +290,7 @@ var app = new Vue({
 				self.setLayout();
 				self.drawParticles('mycanvas');
 				self.walkingAround();
+				// self.setArrowDirections()
 			});
 			$(window).resize(function() {
 				self.setLayout();
