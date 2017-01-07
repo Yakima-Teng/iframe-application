@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Guess Letter</title>
+  <link rel="stylesheet" type="text/css" href="./importer.min.css">
+</head>
+<body>
+  <div class="wrapper">
+    <canvas class="canvas" id="canvas" width="500" height="300">Your browser does not support HTML5 Canvas API</canvas>
+    <form class="form">
+      <input class="button" type="button" id="createImageData" value="Game Picture Capture">
+    </form>
+  </div>
+  <script src="../../scripts/utils.js"></script>
+  <script>
+    'use strict'
+
+    function Game (canvas) {
+      var _this = this
+
+      _this.canvas = canvas
+      _this.ctx = canvas.getContext('2d')
+      _this.width = window.innerWidth
+      _this.height = window.innerHeight
+      _this.pr = window.devicePixelRatio || 1
+      _this.introduction = {
+        title: '游戏规则',
+        description: [
+          '敲击键盘上的英文字母，共有10次机会',
+          '电脑会根据您猜的字母给出相应的提示',
+          '敲击空格键开始游戏'
+        ]
+      }
+
+      _this.times = 0
+      _this.limit = 10
+      _this.message = '请猜一个英文字母'
+      _this.letters = 'abcdefghijklmnopqrstuvwxyz'.split('')
+      _this.letterToGuess = ''
+      _this.lettersGuessed = []
+      _this.tip = ''
+      // game status: 'pending', 'playing', 'success', 'fail'
+      _this.gameStatus = 'pending'
+      _this.timer = ''
+      _this.result = ''
+
+      _this.canvas.width = _this.width * _this.pr
+      _this.canvas.height = _this.height * _this.pr
+      _this.ctx.scale(_this.pr, _this.pr)
+      _this.introduce()
+    }
+
+    Game.prototype.introduce = function () {
+      var _this = this
+      var w = _this.width
+      var h = _this.height
+      var r = Math.random
+
+      _this.ctx.clearRect(0, 0, w, h)
+
+      var gradient = _this.ctx.createRadialGradient(w/2, h/2, 220, w/2, h/2, Math.max(w, h)/2)
+      for (var i = 0; i < 100; i++) {
+        gradient.addColorStop(i/99, 'rgba(' + (155 + r() * 100).toFixed(0) + ', ' + (155 + r() * 100).toFixed(0) + ', ' + (155 + r() * 100).toFixed(0) + ', ' + r().toFixed(1) + ')')
+      }
+
+      _this.ctx.fillStyle = gradient
+      _this.ctx.fillRect(0, 0, w, h)
+      _this.ctx.fillStyle = '#000'
+      _this.ctx.strokeRect(5, 5, w - 10, h - 10)
+      _this.ctx.strokeStyle = '#fff'
+      _this.ctx.font = '30px bold _sans'
+      _this.ctx.strokeText(_this.introduction.title, _this.calculateXOffsetForCenteredText(_this.introduction.title), h/2 - 90)
+      _this.ctx.font = '22px _sans'
+      for (var i = 0, len = _this.introduction.description.length; i < len; i++) {
+        _this.ctx.strokeText(_this.introduction.description[i], _this.calculateXOffsetForCenteredText(_this.introduction.description[i]), h/2 + 30 * (i - 1))
+      }
+    }
+
+    Game.prototype.calculateXOffsetForCenteredText = function (text) {
+      var _this = this
+
+      var metrics = _this.ctx.measureText(text)
+      var textWidth = metrics.width
+
+      return (_this.canvas.width- textWidth) / 2
+    }
+
+    Game.prototype.drawScreen = function () {
+      var _this = this
+      var c = _this.ctx
+      var w = _this.width
+      var h = _this.height
+
+      c.clearRect(0, 0, w, h)
+
+      // background
+      c.fillStyle = '#000'
+      c.fillRect(0, 0, w, h)
+
+      // box
+      c.strokeStyle = '#fff'
+      c.strokeRect(5, 5, w - 10, h - 10)
+      c.textBaseline = 'top'
+
+      // date
+      c.fillStyle = '#fff'
+      c.font = '20px _sans'
+      var dateText = '' + new Date()
+      c.fillText(dateText, _this.calculateXOffsetForCenteredText(dateText), h/2 - 100)
+
+      // guessing times
+      if (_this.times > 0 && _this.times < _this.limit) {
+        c.fillStyle = '#fff'
+        c.font = '26px _sans'
+        var timesText = '你已经猜了' + _this.times + '次，还剩下' + (_this.limit - _this.times) + '次机会'
+        c.fillText(timesText, _this.calculateXOffsetForCenteredText(timesText), h/2 - 70)
+      }
+
+      // feedback
+      c.fillStyle = '#fff'
+      c.font = '26px _sans'
+      c.fillText(_this.tip, _this.calculateXOffsetForCenteredText(_this.tip), h/2)
+
+      // show letters guessed
+      if (_this.lettersGuessed.length > 0) {
+        c.fillStyle = '#fff'
+        c.font = '30px _sans'
+        var lettersGuessed =  '已经猜过的字母：' + _this.lettersGuessed.toString()
+        c.fillText(lettersGuessed, _this.calculateXOffsetForCenteredText(lettersGuessed), h/2 + 100)
+      }
+
+      if (_this.gameStatus === 'success' || _this.gameStatus === 'fail') {
+        c.fillStyle = '#f00'
+        c.font = '40px _sans'
+
+        if (_this.timer) {
+          cancelAnimationFrame(_this.timer)
+        }
+
+        var text = _this.gameStatus === 'success' ? '成功了，按空格键可重新开始游戏' : '失败了！按空格键可重新开始游戏'
+
+        c.fillText(text, _this.calculateXOffsetForCenteredText(text), h/2 + 50)
+      }
+    }
+
+    Game.prototype.continueDrawingScreen = function () {
+      var _this = this
+      if (_this.timer && _this.gameStatus === 'playing') {
+        _this.drawScreen()
+        _this.timer = requestAnimationFrame(function () {
+          _this.continueDrawingScreen()
+        })
+      }
+    }
+
+    Game.prototype.eventKeyPressed = function (e) {
+      var _this = this
+
+      if (_this.gameStatus !== 'playing') {
+        var keyPressed = String.fromCharCode(e.keyCode)
+
+        if (keyPressed === ' ') {
+          _this.init()
+        }
+        return
+      }
+
+      if (_this.gameStatus === 'playing') {
+        var letterPressed = String.fromCharCode(e.keyCode).toLowerCase()
+
+        var letterIndex = _this.letters.indexOf(_this.letterToGuess)
+        var guessIndex = _this.letters.indexOf(letterPressed)
+
+        if (guessIndex === -1) {
+          _this.tip = '你刚才敲的不是字母哦，我读书少，你别骗我'
+        } else {
+          _this.times++
+          _this.lettersGuessed.push(letterPressed)
+
+          if (guessIndex === letterIndex) {
+            _this.tip = '太棒了，你猜对了！'
+            _this.gameStatus = 'success'
+          } else if (_this.times === _this.limit) {
+            _this.tip = '你猜了10次都没猜对哦'
+            _this.gameStatus = 'fail'
+          } else if (guessIndex > letterIndex) {
+            _this.tip = '你猜的字母太靠后了'
+          } else {
+            _this.tip = '你猜的字母太靠前了'
+          }
+        }
+
+        if (_this.timer) {
+          cancelAnimationFrame(_this.timer)
+        }
+
+        _this.timer = requestAnimationFrame(function () {
+          _this.drawScreen()
+        })
+        _this.continueDrawingScreen()
+      }
+    }
+
+    Game.prototype.createImageDataBtnPressed = function (e) {
+      var _this = this
+      window.open(_this.canvas.toDataURL(), 'canvasImage', 'left=0,top=0,width=' + _this.canvas.width + ',height=' + _this.canvas.height + ',toolbar=0,resizable=0')
+    }
+
+    Game.prototype.init = function () {
+      var _this = this
+
+      var letterIndex = Math.floor(Math.random() * _this.letters.length)
+      _this.letterToGuess = _this.letters[letterIndex]
+      console.log('Shush, don\'t tell others, the letter to guess is: ' + _this.letterToGuess)
+
+      _this.tip = '请随便猜一个字母^_^'
+      _this.times = 0
+      _this.lettersGuessed = []
+      _this.gameStatus = 'playing'
+
+      // window.addEventListener('keyup', _this.eventKeyPressed, true)
+
+      var formElement = document.getElementById('createImageData')
+      formElement.style.display = 'inline-block'
+      formElement.addEventListener('click', function () {
+        _this.createImageDataBtnPressed()
+      }, false)
+
+      _this.timer = requestAnimationFrame(function () {
+        _this.drawScreen()
+      })
+
+      _this.continueDrawingScreen()
+    }
+
+    function canvasSupport () {
+      return !!document.createElement('canvas').getContext
+    }
+
+    void function launchApp () {
+      if (!canvasSupport()) {
+        return
+      }
+
+      var canvas = document.getElementById('canvas')
+      var guess = new Game(canvas)
+
+      window.addEventListener('keyup', function (e) {
+        guess.eventKeyPressed(e)
+      }, true)
+    }()
+  </script>
+</body>
+</html>
