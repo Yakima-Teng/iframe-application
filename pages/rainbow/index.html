@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rainbow</title>
+  <link rel="stylesheet" type="text/css" href="importer.min.css">
+</head>
+<body>
+  <div class="wrapper">
+    <canvas class="canvas" id="canvas" width="500" height="300">
+      Your browser does not support HTML5 Canvas API
+    </canvas>
+  </div>
+  <script>
+    'use strict'
+
+    function Rainbow (canvas) {
+      // instance data
+      this.canvas = canvas
+      this.ctx = canvas.getContext('2d')
+      this.times = 0
+      this.limit = 500
+      this.alpha = 0.6
+      this.size = 80
+      this.width = window.innerWidth
+      this.height = window.innerHeight
+      this.pr = window.devicePixelRatio || 1
+      this.r = 0
+      this.points = null
+    }
+
+    Rainbow.prototype.init = function () {
+      var _this = this
+
+      _this.canvas.width = _this.width * _this.pr
+      _this.canvas.height = _this.height * _this.pr
+      _this.ctx.scale(_this.pr, _this.pr)
+      _this.ctx.globalAlpha = _this.alpha
+      _this.renderLoop()
+    }
+
+    Rainbow.prototype.redraw = function () {
+      var _this = this
+      _this.ctx.clearRect(0, 0, _this.width, _this.height)
+      _this.points = [
+        { x: 0, y: _this.height * 0.7 + _this.size },
+        { x: 0, y: _this.height * 0.7 - _this.size }
+      ]
+      while (_this.points[1].x < _this.width + _this.size) {
+        _this.draw(_this.points[0], _this.points[1])
+      }
+    }
+
+    Rainbow.prototype.draw = function (p0, p1) {
+      var _this = this
+      _this.ctx.beginPath()
+      _this.ctx.moveTo(p0.x, p0.y)
+      _this.ctx.lineTo(p1.x, p1.y)
+
+      var p2 = {
+        x: p1.x + (Math.random() * 2 - 0.25) * _this.size,
+        y: _this.line(p1.y)
+      }
+
+      _this.ctx.lineTo(p2.x, p2.y)
+      _this.ctx.closePath()
+
+      _this.r -= Math.PI * 2 / -50
+      var r = _this.r
+      var cos = Math.cos
+      // 一脸懵逼
+      _this.ctx.fillStyle = '#'+(cos(r)*127+128<<16 | cos(r+Math.PI*2/3)*127+128<<8 | cos(r+Math.PI*2/3*2)*127+128).toString(16)
+      _this.ctx.fill()
+
+      _this.points[0] = {
+        x: _this.points[1].x,
+        y: _this.points[1].y
+      }
+
+      _this.points[1] = {
+        x: p2.x,
+        y: p2.y
+      }
+    }
+
+    Rainbow.prototype.line = function (y) {
+      var _this = this
+      var t = y + (Math.random() * 2 - 1.1) * _this.size
+      return (t > _this.height || t < 0) ? _this.line(y) : t
+    }
+
+    Rainbow.prototype.renderLoop = function () {
+      var _this = this
+      _this.redraw()
+      _this.times++
+
+      if (_this.times < _this.limit) {
+        // requestAnimationFrame(function () {
+        //   _this.renderLoop()
+        // })
+        setTimeout(function () {
+          _this.renderLoop()
+        }, 1000)
+      } else {
+        window.alert('Finished ' + _this.limit + ' times.')
+      }
+    }
+
+    function canvasSupport () {
+      return !!document.createElement('canvas').getContext
+    }
+
+    function launchApp () {
+      if (!canvasSupport()) {
+        return
+      }
+
+      var canvas = document.getElementById('canvas')
+      new Rainbow(canvas).init()
+    }
+
+    launchApp()
+  </script>
+</body>
+</html>
