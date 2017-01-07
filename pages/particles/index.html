@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rainbow</title>
+  <link rel="stylesheet" type="text/css" href="importer.min.css">
+</head>
+<body>
+  <div class="wrapper">
+    粒子效果
+    <canvas class="canvas" id="canvas" width="500" height="300">
+      Your browser does not support HTML5 Canvas API
+    </canvas>
+  </div>
+  <script>
+    'use strict'
+
+    // function Particles () {
+    //   _this.drawParticles('mycanvas');
+    //   drawParticles: function(elementId) {
+    //     var mycanvas = document.getElementById(elementId);
+    //     var ctx = mycanvas.getContext('2d');
+    //     ctx.clearRect(0,0,500,500);
+    //     var timer = setInterval(function() { //画粒子
+    //       function drawPartic(ctx,r) {
+    //         ctx.save();
+    //         ctx.beginPath();
+    //         ctx.moveTo(r,0);
+    //         for (var i = 0; i < 10; i++) {
+    //           ctx.rotate(Math.PI/Math.random()*20); //旋转图形，这是生成图形的关键
+    //           ctx.lineTo(r,0);
+    //         }
+    //         ctx.closePath();
+    //         ctx.fill();
+    //         ctx.restore();
+    //       }
+    //       ctx.fillRect(0,0,500,500); //填充区的大小为500*500
+    //       ctx.save();
+    //       ctx.translate(250,250); //将当前坐标移动到(250,250)位置上
+    //       ctx.beginPath(); //拟定半径
+    //       ctx.arc(0,0,200,0,Math.PI*2,true); //画出一个半径为200的圆
+    //       // ctx.clip(); //裁剪上面的圆
+
+    //       // 对裁剪区域进行加样式处理
+    //       var linearGradient = ctx.createLinearGradient(0,-300,0,250); //设定起始点
+    //       linearGradient.addColorStop(0, '#ff0000'); //渐变色0
+    //       linearGradient.addColorStop(1, '#004080'); //渐变色1
+    //       ctx.fillStyle = linearGradient;
+    //       ctx.fillRect(-250,-250,500,500); //裁剪的重要一步，由于上面已经开始了translate，因此这里需要调整到-250,
+    //       for (var j=1; j<250;j++) { //生成的粒子的密度
+    //         ctx.save();
+    //         ctx.fillStyle = '#ffff00';
+    //         ctx.translate(250-Math.floor(Math.random()*500), 250-Math.floor(Math.random()*500));
+    //         drawPartic(ctx, Math.floor(Math.random()*10)); //粒子生成
+    //         ctx.restore();
+    //       }
+    //       ctx.restore();
+    //     },100);
+    //     setTimeout(function() {
+    //       clearInterval(timer);
+    //     }, 600000);
+    //   },
+    //   colorTransition: function(elementId) {
+    //     var self = this;
+    //     var mycanvas = document.getElementById(elementId);
+    //     var ctx = mycanvas.getContext('2d');
+    //     ctx.clearRect(0,0,500,500);
+    //     var i = 0;
+    //     var timer = setInterval(function() {
+    //       var gradient = ctx.createRadialGradient(250,250,0,250,250,250);
+    //       gradient.addColorStop(i*0, 'magenta');
+    //       gradient.addColorStop(i*(1/5), 'blue');
+    //       gradient.addColorStop(i*(1/2), 'green');
+    //       gradient.addColorStop(i*(3/4), 'yellow');
+    //       gradient.addColorStop(i*1, 'red');
+    //       ctx.fillStyle = gradient;
+    //       i+=0.1;
+    //       if (i>=1) i = 0;
+    //       ctx.fillRect(0,0,500,500);
+    //     }, 50);
+    //     setTimeout(function() {
+    //       clearInterval(timer);
+    //     }, 300000);
+    //     mycanvas.onmouseout = function() {
+    //       setTimeout(function() {
+    //         if (timer) clearInterval(timer);
+    //         self.drawParticles(elementId);
+    //       }, 1000);
+    //     };
+    //   },
+    // }
+
+    function canvasSupport () {
+      return !!document.createElement('canvas').getContext
+    }
+
+    void function launchApp () {
+      if (!canvasSupport()) {
+        return
+      }
+
+      // var canvas = document.getElementById('canvas')
+      // new Particles(canvas)
+    }()
+  </script>
+</body>
+</html>
