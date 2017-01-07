@@ -44,10 +44,6 @@ var app = new Vue({
 			"新疆": ["乌鲁木齐", "克拉玛依", "吐鲁番", "哈密", "昌吉州", "博尔州", "巴音郭楞州", "阿克苏", "克孜勒苏柯尔克孜州", "喀什", "和田", "伊犁哈萨克州", "塔城", "阿勒泰", "石河子", "阿拉尔", "图木舒克", "五家渠"]
 		},
 		originalCardPositions: [],
-		idLoading: true,
-		isAnimating: false,
-		isWalking: false,
-		animationInterval: 150,
 		indexOfCurLastCardByEye: 30,
 		arrowDirections: [],
 		colorIndices: [],
@@ -148,8 +144,7 @@ var app = new Vue({
 			}
 			else {
 				$cards.removeClass('active-province').eq(newProvinceIndex).addClass('active-province').css({
-					top: self.windowHeight * 0.5 + 'px',
-					left: self.windowWidth * 0.5 + 'px'
+					transform: 'translate(-50%, -50%)'
 				});
 			}
 			if (newProvinceIndex !== oldProvinceIndex && !self.isSamePosition($oldElement.css('left'), self.originalCardPositions[oldProvinceIndex].left)) {
@@ -157,22 +152,6 @@ var app = new Vue({
 				if ($oldElement.hasClass('active-province')) $oldElement.removeClass('active-province');
 			}
 			this.curProvinceIndex = newProvinceIndex;
-			// if (!this.isWalking) {
-			//
-			//     // return;
-			// }
-			// if (!self.isSamePosition($newElement.css('left'), self.originalCardPositions[newProvinceIndex].left)) {
-			//     $newElement.css(self.originalCardPositions[newProvinceIndex]);
-			// }
-			// else {
-			//     $newElement.css({
-			//         top: self.windowHeight * 0.5 + 'px',
-			//         left: self.windowWidth * 0.5 + 'px'
-			//     });
-			// }
-
-			// if ($newElement.hasClass('active-province')) $newElement.removeClass('active-province');
-			// else $newElement.addClass('active-province');
 		},
 		setLayout: function() {
 			var i,
@@ -184,44 +163,23 @@ var app = new Vue({
 			self.windowHeight = $(window).height();
 			$('.card.active-province').removeClass('active-province');
 			for (i = 0; i < total; i++) {
+				var transX = 100 * (i % 8 - 4) + '%'
+				var transY = 100 * (Math.floor(i/8) - 2) + '%'
 				$cards.eq(i).css({
-					top: self.distanceY * 0.5 + self.distanceY * (Math.floor(i/8)) + 'px',
-					left: self.distanceX * 0.5 + self.distanceX * (i%8) + 'px'
+					transform: 'translate(' + transX + ',' + transY + ')'
 				});
 				self.originalCardPositions.push({
-					top: self.distanceY * 0.5 + self.distanceY * (Math.floor(i/8)) + 'px',
-					left: self.distanceX * 0.5 + self.distanceX * (i%8) + 'px'
+					transform: 'translate(' + transX + ',' + transY + ')'
 				});
 			}
 			this.curCardsArrByEye = [7,6,5,4,3,2,1,0,8,9,10,11,12,13,14,15,23,22,21,20,19,18,17,16,24,25,26,27,28,29,30];
 			this.indexOfCurLastCardByEye = 30;
-			// if (this.isWalking) {
-			//     this.walkAround();
-			// }
 		},
 		clickCard: function(cardIndex) {
 			var $cards = $('.card'),
 				self = this;
 			$cards.eq(cardIndex).trigger('click');
 			self.curProvinceIndex = cardIndex;
-		},
-		triggerAnimation: function(startIndex) {
-			var i = startIndex || 0,
-				self = this,
-				interval = self.animationInterval,
-				total = $('.card').length,
-				timer = setInterval(function() {
-					if (i < total) self.clickCard(i++);
-					else clearInterval(timer);
-				}, interval);
-			self.isAnimating = true;
-			setTimeout(function() {
-				self.clickCard(total - 1);
-				setTimeout(function() {
-					self.isAnimating = false;
-					self.walkingAround();
-				}, interval);
-			}, interval * (total + 1));
 		},
 		walkAround: function() {
 			var i, j, k,
@@ -264,16 +222,14 @@ var app = new Vue({
 			self.colorElements('.card header', .6);
 		},
 		walkingAround: function() {
-			var self = this,
-				timer = setInterval(function() {
-					self.walkAround();
-				}, 1000);
+			var self = this
+			var timer = setInterval(function() {
+				self.walkAround();
+			}, 1000);
 			// make page available to response for clicking event
-			self.isWalking = true;
 			self.walkAround(self.indexOfCurLastCardByEye);
 			setTimeout(function() {
 				clearInterval(timer);
-				self.isWalking = false;
 			}, 6400000);
 		},
 		setArrowDirections: function() {
@@ -303,71 +259,9 @@ var app = new Vue({
 			this.colorIndices = colorIndices;
 			this.arrowDirections = arr;
 		},
-		// not used here
-		rgb2ColorForOldBrowser: function() {
-			function byte2Hex(n) {
-				var nybHexString = "0123456789ABCDEF";
-				return String(nybHexString.substr((n >> 4) & 0x0F,1)) + nybHexString.substr(n & 0x0F,1);
-			}
-			return '#' + byte2Hex(r) + byte2Hex(g) + byte2Hex(b);
-		},
-		// not used here
-		rgb2Color: function(r, g, b) {
-			return 'rgb(' + Math.round(r) + ',' + Math.round(g) + ',' + Math.round(b) + ')';
-		},
 		rgba2Color: function(r, g, b, a) {
 			a = a || 1;
 			return 'rgba(' + Math.round(r) + ',' + Math.round(g) + ',' + Math.round(b) + ',' + a + ')';
-		},
-		// not used here
-		writeSin: function(freq) {
-			var v, r, g, b,
-				self = this,
-				frequency = freq || .010,
-				amplitude = 127,
-				center = 128;
-			for (var j = 0; j < 32; j++) {
-				frequency+=0.050;
-				for (var i = 0; i < 32; i++) {
-					r = Math.sin(frequency * i) * amplitude + center;
-					g = Math.sin(frequency * i + 2*Math.PI/3) * amplitude + center;
-					b = Math.sin(frequency * i + 4*Math.PI/3) * amplitude + center;
-					// Note that &#9608; is a unicode character that makes a solid block
-					document.write('<span style="color:' + self.rgb2Color(r, g, b) + ';">&#9608;</span>');
-				}
-				document.write('<br>');
-			}
-		},
-		// not used here
-		makeColorGradient: function(frequency1, frequency2, frequency3, phase1, phase2, phase3, center, width, len) {
-			var i, r, g, b,
-				self = this;
-			center = center || 128;
-			width = width || 127;
-			len = len || 50;
-			for (i = 0; i < len; i++) {
-				r = Math.sin(frequency1 * i + phase1) * width + center;
-				g = Math.sin(frequency2 * i + phase2) * width + center;
-				b = Math.sin(frequency3 * i + phase3) * width + center;
-				document.write('<span style="color:' + self.rgb2Color(r, g, b) + ';">&#9608;</span>');
-			}
-			document.write('<br>');
-		},
-		// not used here
-		colorText: function(str, phase) {
-			var i, r, g, b,
-				self = this,
-				center = 128,
-				width = 127,
-				frequency =Math.PI*2/str.length;
-			phase = phase || 0;
-			for (i = 0; i < str.length; i++) {
-				r = Math.sin(frequency * i + 2 + phase) * width + center;
-				g = Math.sin(frequency * i + phase) * width + center;
-				b = Math.sin(frequency * i + 4 + phase) * width + center;
-				document.write('<span style="color:' + self.rgb2Color(r, g, b) + ';">' + str.substr(i,1) + '</span>');
-			}
-			document.write('<br>');
 		},
 		colorElements: function(cssSelector, phase) {
 			var i, r, g, b,
@@ -392,21 +286,15 @@ var app = new Vue({
 	},
 	init: function() {},
 	created: function() {
-		(function(self) {
-			// todo: compute size of cards
+		void function(self) {
 			$(document).ready(function() {
 				self.setLayout();
 				self.drawParticles('mycanvas');
+				self.walkingAround();
 			});
 			$(window).resize(function() {
 				self.setLayout();
 			});
-			setTimeout(function() {
-				self.triggerAnimation();
-				// value of indexOfCurLastCardByEye variable is now 30
-				// self.setArrowDirections();
-			}, 600);
-			self.isLoading = false;
-		})(this);
+		}(this);
 	}
 });

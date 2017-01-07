@@ -13,20 +13,20 @@
   <noscript>您的浏览器不支持JavaScript或者JavaScript的运行被您禁止了。</noscript>
   <link rel="stylesheet" href="../../css/normalize.min.css">
   <link rel="stylesheet" href="../../css/font-awesome.min.css">
-  <link rel="stylesheet" href="./app.css">
+  <link rel="stylesheet" href="./importer.min.css">
 </head>
 <body>
 <div class="container">
-  <ul>
+  <ul class="ul">
     <li v-for="(key, value) in allCities" @click="toggleHighlight($index)" class="card transition-fast">
       <div class="inner transition">
-        <header :class="{'transition-medium': isWalking}">
+        <header class="header" :class="{'transition-medium': isWalking}">
           {{key}}
           <i v-show="isWalking" class="fa fa-2x transition" :class="arrowDirections[$index] + ' ' + colorIndices[$index]"></i>
         </header>
-        <article v-show="!isAnimating" class="transition-medium">
+        <article v-show="!isAnimating" class="transition-medium article">
           <ul>
-            <li v-for="item in value">{{item}}</li>
+            <li class="li" v-for="item in value">{{item}}</li>
           </ul>
         </article>
       </div>
