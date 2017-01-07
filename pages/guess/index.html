@@ -59,13 +59,14 @@
 
       _this.ctx.clearRect(0, 0, w, h)
 
-      var gradient = _this.ctx.createRadialGradient(w/2, h/2, 220, w/2, h/2, Math.max(w, h)/2)
-      for (var i = 0; i < 100; i++) {
-        gradient.addColorStop(i/99, 'rgba(' + (155 + r() * 100).toFixed(0) + ', ' + (155 + r() * 100).toFixed(0) + ', ' + (155 + r() * 100).toFixed(0) + ', ' + r().toFixed(1) + ')')
-      }
+      var gradient = _this.ctx.createRadialGradient(w/2, h/2, 220, w/2, h/2, Math.max(w, h)/2 - 10)
+      gradient.addColorStop(0, 'rgba(100, 100, 100, 1)')
+      gradient.addColorStop(0.25, 'rgba(240, 160, 80, 1)')
+      gradient.addColorStop(0.5, 'rgba(160, 80, 240, 1)')
+      gradient.addColorStop(0.75, 'rgba(0, 0, 0, 1)')
 
       _this.ctx.fillStyle = gradient
-      _this.ctx.fillRect(0, 0, w, h)
+      _this.ctx.fillRect(5, 5, w - 10, h - 10)
       _this.ctx.fillStyle = '#000'
       _this.ctx.strokeRect(5, 5, w - 10, h - 10)
       _this.ctx.strokeStyle = '#fff'
