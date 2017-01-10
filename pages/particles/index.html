@@ -7,101 +7,119 @@
 </head>
 <body>
   <div class="wrapper">
-    粒子效果
     <canvas class="canvas" id="canvas" width="500" height="300">
       Your browser does not support HTML5 Canvas API
     </canvas>
   </div>
+  <script src="../../scripts/utils.js"></script>
   <script>
-    'use strict'
+  'use strict'
 
-    // function Particles () {
-    //   _this.drawParticles('mycanvas');
-    //   drawParticles: function(elementId) {
-    //     var mycanvas = document.getElementById(elementId);
-    //     var ctx = mycanvas.getContext('2d');
-    //     ctx.clearRect(0,0,500,500);
-    //     var timer = setInterval(function() { //画粒子
-    //       function drawPartic(ctx,r) {
-    //         ctx.save();
-    //         ctx.beginPath();
-    //         ctx.moveTo(r,0);
-    //         for (var i = 0; i < 10; i++) {
-    //           ctx.rotate(Math.PI/Math.random()*20); //旋转图形，这是生成图形的关键
-    //           ctx.lineTo(r,0);
-    //         }
-    //         ctx.closePath();
-    //         ctx.fill();
-    //         ctx.restore();
-    //       }
-    //       ctx.fillRect(0,0,500,500); //填充区的大小为500*500
-    //       ctx.save();
-    //       ctx.translate(250,250); //将当前坐标移动到(250,250)位置上
-    //       ctx.beginPath(); //拟定半径
-    //       ctx.arc(0,0,200,0,Math.PI*2,true); //画出一个半径为200的圆
-    //       // ctx.clip(); //裁剪上面的圆
+  function Particles (canvas) {
+    // instance data
+    this.canvas = canvas
+    this.ctx = canvas.getContext('2d')
+    this.alpha = 0.6
+    this.width = window.innerWidth
+    this.height = window.innerHeight
+    this.pr = window.devicePixelRatio || 1
+    this.particles = []
 
-    //       // 对裁剪区域进行加样式处理
-    //       var linearGradient = ctx.createLinearGradient(0,-300,0,250); //设定起始点
-    //       linearGradient.addColorStop(0, '#ff0000'); //渐变色0
-    //       linearGradient.addColorStop(1, '#004080'); //渐变色1
-    //       ctx.fillStyle = linearGradient;
-    //       ctx.fillRect(-250,-250,500,500); //裁剪的重要一步，由于上面已经开始了translate，因此这里需要调整到-250,
-    //       for (var j=1; j<250;j++) { //生成的粒子的密度
-    //         ctx.save();
-    //         ctx.fillStyle = '#ffff00';
-    //         ctx.translate(250-Math.floor(Math.random()*500), 250-Math.floor(Math.random()*500));
-    //         drawPartic(ctx, Math.floor(Math.random()*10)); //粒子生成
-    //         ctx.restore();
-    //       }
-    //       ctx.restore();
-    //     },100);
-    //     setTimeout(function() {
-    //       clearInterval(timer);
-    //     }, 600000);
-    //   },
-    //   colorTransition: function(elementId) {
-    //     var self = this;
-    //     var mycanvas = document.getElementById(elementId);
-    //     var ctx = mycanvas.getContext('2d');
-    //     ctx.clearRect(0,0,500,500);
-    //     var i = 0;
-    //     var timer = setInterval(function() {
-    //       var gradient = ctx.createRadialGradient(250,250,0,250,250,250);
-    //       gradient.addColorStop(i*0, 'magenta');
-    //       gradient.addColorStop(i*(1/5), 'blue');
-    //       gradient.addColorStop(i*(1/2), 'green');
-    //       gradient.addColorStop(i*(3/4), 'yellow');
-    //       gradient.addColorStop(i*1, 'red');
-    //       ctx.fillStyle = gradient;
-    //       i+=0.1;
-    //       if (i>=1) i = 0;
-    //       ctx.fillRect(0,0,500,500);
-    //     }, 50);
-    //     setTimeout(function() {
-    //       clearInterval(timer);
-    //     }, 300000);
-    //     mycanvas.onmouseout = function() {
-    //       setTimeout(function() {
-    //         if (timer) clearInterval(timer);
-    //         self.drawParticles(elementId);
-    //       }, 1000);
-    //     };
-    //   },
-    // }
+    this.canvas.width = this.width * this.pr
+    this.canvas.height = this.height * this.pr
 
-    function canvasSupport () {
-      return !!document.createElement('canvas').getContext
+    this.ctx.scale(this.pr, this.pr)
+    this.ctx.globalAlpha = this.alpha
+  }
+
+  Particles.prototype.drawImage = function () {
+    var _this = this
+    var img1 = new Image()
+    var img2 = new Image()
+    img1.src = '../../img/pikaqiu_01.png'
+    img2.src = '../../img/pikaqiu_02.png'
+
+    var count = 0
+    img1.onload = function () {
+      _this.ctx.drawImage(img1, 0, 0, img1.width, img1.height, 0, 0, img1.width, img1.height)
+      count++
+      _this.saveData(count)
+    }
+    img2.onload = function () {
+      _this.ctx.drawImage(img2, 0, 0, img2.width, img2.height, 400, 400, img2.width, img2.height)
+      count++
+      _this.saveData(count)
+    }
+  }
+
+  Particles.prototype.saveData = function (count) {
+    if (count !== 2) {
+      return
+    }
+    var _this = this
+
+    void function loop () {
+      _this.draw()
+      requestAnimationFrame(function () {
+        loop()
+      })
+    }()
+  }
+
+  Particles.prototype.draw = function () {
+    var _this = this
+
+    var canvasData = _this.ctx.getImageData(0, 0, _this.canvas.width, _this.canvas.height)
+    var particles = []
+    var len = canvasData.data.length
+    // 只保存100行100列的像素值
+    var rows = 100
+    var cols = 100
+    var cellWidth = parseInt(canvasData.width / cols)
+    var cellHeight = parseInt(canvasData.height / rows)
+    var idxInDataArr = 0
+    var particleOffsetX
+    var particleOffsetY
+    var data = canvasData.data
+
+    for (var i = 1; i <= cols; i++) {
+      for (var j = 1; j <= rows; j++) {
+        // 计算第i列j行cell对应RGBA值中R值在data数组中的坐标
+        idxInDataArr = ((j * cellHeight - 1) * _this.canvas.width + (i * cellWidth - 1)) * 4
+        // 判断R值是否符合要求
+        if (data[idxInDataArr] > 250) {
+          var particle = {
+            // 偏移，x、y都随机一下
+            x: 50 + i * cellWidth + (Math.random() - 0.5) * 20,
+            y: 50 + j * cellHeight + (Math.random() - 0.5) * 20,
+            fillStyle: '#006eff'
+          }
+          particles.push(particle)
+        }
+      }
     }
 
-    void function launchApp () {
-      if (!canvasSupport()) {
-        return
-      }
+    // _this.ctx.clearRect(0, 0, _this.canvas.width, _this.canvas.height)
 
-      // var canvas = document.getElementById('canvas')
-      // new Particles(canvas)
-    }()
+    for (var i = 0, len = particles.length; i < len; i++) {
+      var curParticle = particles[i]
+      _this.ctx.fillStyle = curParticle.fillStyle
+      _this.ctx.fillRect(curParticle.x, curParticle.y, 10, 10)
+    }
+  }
+
+  function canvasSupport () {
+    return !!document.createElement('canvas').getContext
+  }
+
+  void function launchApp () {
+    if (!canvasSupport()) {
+      return
+    }
+
+    var canvas = document.getElementById('canvas')
+    new Particles(canvas).drawImage()
+  }()
   </script>
 </body>
 </html>
