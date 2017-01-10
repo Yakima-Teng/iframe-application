@@ -34,64 +34,57 @@
 
   Particles.prototype.drawImage = function () {
     var _this = this
-    var img1 = new Image()
-    var img2 = new Image()
-    img1.src = '../../img/pikaqiu_01.png'
-    img2.src = '../../img/pikaqiu_02.png'
+    var img = new Image()
+    img.src = '../../img/pikaqiu_01.png'
 
-    var count = 0
-    img1.onload = function () {
-      _this.ctx.drawImage(img1, 0, 0, img1.width, img1.height, 0, 0, img1.width, img1.height)
-      count++
-      _this.saveData(count)
-    }
-    img2.onload = function () {
-      _this.ctx.drawImage(img2, 0, 0, img2.width, img2.height, 400, 400, img2.width, img2.height)
-      count++
-      _this.saveData(count)
+    img.onload = function () {
+      _this.ctx.drawImage(img, 0, 0, img.width, img.height, (_this.canvas.width - img.width) / 2, (_this.canvas.height - img.height) / 2, img.width, img.height)
+      _this.saveData()
     }
   }
 
-  Particles.prototype.saveData = function (count) {
-    if (count !== 2) {
-      return
-    }
-    var _this = this
-
-    void function loop () {
-      _this.draw()
-      requestAnimationFrame(function () {
-        loop()
-      })
-    }()
-  }
-
-  Particles.prototype.draw = function () {
+  Particles.prototype.saveData = function () {
     var _this = this
 
     var canvasData = _this.ctx.getImageData(0, 0, _this.canvas.width, _this.canvas.height)
+
+    void function loop () {
+      _this.draw(canvasData)
+      requestAnimationFrame(function () {
+        loop()
+      })
+      // setTimeout(loop, 1000)
+    }()
+  }
+
+  Particles.prototype.draw = function (canvasData) {
+    var _this = this
+
     var particles = []
     var len = canvasData.data.length
     // 只保存100行100列的像素值
-    var rows = 100
-    var cols = 100
-    var cellWidth = parseInt(canvasData.width / cols)
-    var cellHeight = parseInt(canvasData.height / rows)
+    // var rows = 100
+    // var cols = 100
+    // var cellWidth = parseInt(canvasData.width / cols)
+    // var cellHeight = parseInt(canvasData.height / rows)
     var idxInDataArr = 0
     var particleOffsetX
     var particleOffsetY
     var data = canvasData.data
 
-    for (var i = 1; i <= cols; i++) {
-      for (var j = 1; j <= rows; j++) {
-        // 计算第i列j行cell对应RGBA值中R值在data数组中的坐标
-        idxInDataArr = ((j * cellHeight - 1) * _this.canvas.width + (i * cellWidth - 1)) * 4
+    _this.ctx.clearRect(0, 0, _this.canvas.width, _this.canvas.height)
+    for (var i = 0; i < canvasData.width; i+=6) {
+      for (var j = 0; j < canvasData.height; j+=6) {
+        // 计算(i, j)坐标上的像素点对应RGBA值中R值在data数组中的索引
+        idxInDataArr = (j * canvasData.width + i) * 4
         // 判断R值是否符合要求
-        if (data[idxInDataArr] > 250) {
+        if (data[idxInDataArr + 3] > 50) {
+          var distance = (Math.random() - 0.5) * 1
           var particle = {
             // 偏移，x、y都随机一下
-            x: 50 + i * cellWidth + (Math.random() - 0.5) * 20,
-            y: 50 + j * cellHeight + (Math.random() - 0.5) * 20,
+            x: i + distance,
+            y: j + distance,
+            rgba: 'rgba(' + data[idxInDataArr] + ', ' + data[idxInDataArr + 1] + ', ' + data[idxInDataArr + 2] + ', ' + data[idxInDataArr + 3] + ')',
             fillStyle: '#006eff'
           }
           particles.push(particle)
@@ -102,9 +95,14 @@
     // _this.ctx.clearRect(0, 0, _this.canvas.width, _this.canvas.height)
 
     for (var i = 0, len = particles.length; i < len; i++) {
+      _this.ctx.save()
+      _this.ctx.beginPath()
       var curParticle = particles[i]
-      _this.ctx.fillStyle = curParticle.fillStyle
-      _this.ctx.fillRect(curParticle.x, curParticle.y, 10, 10)
+      // _this.ctx.fillRect(curParticle.x, curParticle.y, 10, 10)
+      _this.ctx.arc(curParticle.x, curParticle.y, 2, 0, Math.PI * 2)
+      _this.ctx.fillStyle = curParticle.rgba
+      _this.ctx.fill()
+      _this.ctx.restore()
     }
   }
 
