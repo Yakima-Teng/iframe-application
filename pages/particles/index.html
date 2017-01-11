@@ -38,7 +38,13 @@
     img.src = '../../img/pikaqiu_01.png'
 
     img.onload = function () {
-      _this.ctx.drawImage(img, 0, 0, img.width, img.height, (_this.canvas.width - img.width) / 2, (_this.canvas.height - img.height) / 2, img.width, img.height)
+      var maxLength = Math.max(_this.canvas.width, _this.canvas.height)
+      var printWidth = maxLength * 0.6
+      var printHeight = printWidth * 335 / 370
+      // 让绘制到canvas上的图片位于中间位置，所需给图片左上角设定的起始坐标
+      var printX = (_this.canvas.width - printWidth) / 2
+      var printY = (_this.canvas.height - printHeight) / 2
+      _this.ctx.drawImage(img, 0, 0, img.width, img.height, printX, printY, printWidth, printHeight)
       _this.saveData()
     }
   }
@@ -47,6 +53,30 @@
     var _this = this
 
     var canvasData = _this.ctx.getImageData(0, 0, _this.canvas.width, _this.canvas.height)
+
+    var particles = []
+    var idxInDataArr = 0
+    var data = canvasData.data
+
+    for (var i = 0; i < canvasData.width; i+=6) {
+      for (var j = 0; j < canvasData.height; j+=6) {
+        // 计算(i, j)坐标上的像素点对应RGBA值中R值在data数组中的索引
+        idxInDataArr = (j * canvasData.width + i) * 4
+        // 判断R值是否符合要求
+        if (data[idxInDataArr + 3] > 50) {
+          var r = data[idxInDataArr]
+          var g = data[idxInDataArr + 1]
+          var b = data[idxInDataArr + 2]
+          var a = data[idxInDataArr + 3]
+          var offsetX = i
+          var offsetY = j
+          var rgba = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')'
+          particles.push(new Particle(offsetX, offsetY, rgba))
+        }
+      }
+    }
+
+    _this.particles = particles
 
     void function loop () {
       _this.draw(canvasData)
@@ -59,51 +89,64 @@
 
   Particles.prototype.draw = function (canvasData) {
     var _this = this
-
-    var particles = []
-    var len = canvasData.data.length
-    // 只保存100行100列的像素值
-    // var rows = 100
-    // var cols = 100
-    // var cellWidth = parseInt(canvasData.width / cols)
-    // var cellHeight = parseInt(canvasData.height / rows)
-    var idxInDataArr = 0
-    var particleOffsetX
-    var particleOffsetY
-    var data = canvasData.data
+    var particles = _this.particles
 
     _this.ctx.clearRect(0, 0, _this.canvas.width, _this.canvas.height)
-    for (var i = 0; i < canvasData.width; i+=6) {
-      for (var j = 0; j < canvasData.height; j+=6) {
-        // 计算(i, j)坐标上的像素点对应RGBA值中R值在data数组中的索引
-        idxInDataArr = (j * canvasData.width + i) * 4
-        // 判断R值是否符合要求
-        if (data[idxInDataArr + 3] > 50) {
-          var distance = (Math.random() - 0.5) * 1
-          var particle = {
-            // 偏移，x、y都随机一下
-            x: i + distance,
-            y: j + distance,
-            rgba: 'rgba(' + data[idxInDataArr] + ', ' + data[idxInDataArr + 1] + ', ' + data[idxInDataArr + 2] + ', ' + data[idxInDataArr + 3] + ')',
-            fillStyle: '#006eff'
-          }
-          particles.push(particle)
-        }
-      }
-    }
-
-    // _this.ctx.clearRect(0, 0, _this.canvas.width, _this.canvas.height)
 
     for (var i = 0, len = particles.length; i < len; i++) {
       _this.ctx.save()
       _this.ctx.beginPath()
       var curParticle = particles[i]
-      // _this.ctx.fillRect(curParticle.x, curParticle.y, 10, 10)
-      _this.ctx.arc(curParticle.x, curParticle.y, 2, 0, Math.PI * 2)
+      _this.ctx.arc(curParticle.getX(), curParticle.getY(), curParticle.getRadius(), 0, Math.PI * 2)
       _this.ctx.fillStyle = curParticle.rgba
       _this.ctx.fill()
       _this.ctx.restore()
     }
+  }
+
+  function Particle (offsetX, offsetY, rgba) {
+    this.offsetMinX = offsetX - 20
+    this.offsetMinY = offsetY - 20
+    this.offsetMaxX = offsetX + 20
+    this.offsetMaxY = offsetY + 20
+    this.x = offsetX
+    this.y = offsetY
+    this.rgba = rgba
+    // 矢量，带方向和步长
+    this.vectorX = 4
+    this.vectorY = 3
+  }
+
+  Particle.prototype.getX = function () {
+    var _this = this
+    if (_this.x < _this.offsetMaxX && _this.x > _this.offsetMinX) {
+      _this.x += _this.vectorX
+    } else if (_this.x >= _this.offsetMaxX) {
+      _this.vectorX = -4
+      _this.x += _this.vectorX
+    } else {
+      _this.vectorX = 4
+      _this.x += _this.vectorX
+    }
+    return _this.x
+  }
+
+  Particle.prototype.getY = function () {
+    var _this = this
+    if (_this.y < _this.offsetMaxY && _this.y > _this.offsetMinY) {
+      _this.y += _this.vectorY
+    } else if (_this.y >= _this.offsetMaxY) {
+      _this.vectorY = -3
+      _this.y += _this.vectorY
+    } else {
+      _this.vectorY = 3
+      _this.y += _this.vectorY
+    }
+    return _this.y
+  }
+
+  Particle.prototype.getRadius = function () {
+    return 2
   }
 
   function canvasSupport () {
