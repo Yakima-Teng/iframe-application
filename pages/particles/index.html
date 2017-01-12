@@ -32,27 +32,29 @@
     this.ctx.globalAlpha = this.alpha
   }
 
-  Particles.prototype.drawImage = function () {
+  Particles.prototype.downloadImage = function () {
     var _this = this
     var img = new Image()
     img.src = '../../img/pikaqiu_01.png'
 
     img.onload = function () {
       var maxLength = Math.max(_this.canvas.width, _this.canvas.height)
-      var printWidth = maxLength * 0.6
+      var printWidth = maxLength * 0.3
       var printHeight = printWidth * 335 / 370
       // 让绘制到canvas上的图片位于中间位置，所需给图片左上角设定的起始坐标
       var printX = (_this.canvas.width - printWidth) / 2
       var printY = (_this.canvas.height - printHeight) / 2
       _this.ctx.drawImage(img, 0, 0, img.width, img.height, printX, printY, printWidth, printHeight)
-      _this.saveData()
+      var canvasData = _this.ctx.getImageData(0, 0, _this.canvas.width, _this.canvas.height)
+      // _this.saveData(canvasData)
+      setTimeout(_this.saveData.bind(_this, canvasData), 300)
     }
   }
 
-  Particles.prototype.saveData = function () {
+  Particles.prototype.saveData = function (canvasData) {
     var _this = this
 
-    var canvasData = _this.ctx.getImageData(0, 0, _this.canvas.width, _this.canvas.height)
+    // var canvasData = _this.ctx.getImageData(0, 0, _this.canvas.width, _this.canvas.height)
 
     var particles = []
     var idxInDataArr = 0
@@ -79,24 +81,23 @@
     _this.particles = particles
 
     void function loop () {
-      _this.draw(canvasData)
+      _this.draw()
       requestAnimationFrame(function () {
         loop()
       })
-      // setTimeout(loop, 1000)
     }()
   }
 
-  Particles.prototype.draw = function (canvasData) {
+  Particles.prototype.draw = function () {
     var _this = this
     var particles = _this.particles
 
     _this.ctx.clearRect(0, 0, _this.canvas.width, _this.canvas.height)
 
     for (var i = 0, len = particles.length; i < len; i++) {
+      var curParticle = particles[i]
       _this.ctx.save()
       _this.ctx.beginPath()
-      var curParticle = particles[i]
       _this.ctx.arc(curParticle.getX(), curParticle.getY(), curParticle.getRadius(), 0, Math.PI * 2)
       _this.ctx.fillStyle = curParticle.rgba
       _this.ctx.fill()
@@ -107,41 +108,42 @@
   function Particle (offsetX, offsetY, rgba) {
     this.offsetMinX = offsetX - 20
     this.offsetMinY = offsetY - 20
-    this.offsetMaxX = offsetX + 20
-    this.offsetMaxY = offsetY + 20
+    this.offsetMaxX = offsetX + 200
+    this.offsetMaxY = offsetY + 200
     this.x = offsetX
     this.y = offsetY
     this.rgba = rgba
-    // 矢量，带方向和步长
-    this.vectorX = 4
-    this.vectorY = 3
+    this.vectorX = (Math.random() - 0.5) * 4
+    this.vectorY = -5 + (Math.random() - 0.5) * 2
+    this.gravity = 0.1
+    this.birthTime = +new Date()
   }
 
   Particle.prototype.getX = function () {
     var _this = this
-    if (_this.x < _this.offsetMaxX && _this.x > _this.offsetMinX) {
-      _this.x += _this.vectorX
-    } else if (_this.x >= _this.offsetMaxX) {
-      _this.vectorX = -4
-      _this.x += _this.vectorX
-    } else {
-      _this.vectorX = 4
-      _this.x += _this.vectorX
-    }
+    _this.x += _this.vectorX
+    // if (_this.x > _this.offsetMaxX) {
+    //   _this.x = _this.offsetMinX
+    // } else if (_this.x < _this.offsetMinX) {
+    //   _this.x = _this.offsetMaxX
+    // }
     return _this.x
   }
 
   Particle.prototype.getY = function () {
     var _this = this
-    if (_this.y < _this.offsetMaxY && _this.y > _this.offsetMinY) {
-      _this.y += _this.vectorY
-    } else if (_this.y >= _this.offsetMaxY) {
-      _this.vectorY = -3
-      _this.y += _this.vectorY
-    } else {
-      _this.vectorY = 3
-      _this.y += _this.vectorY
+    _this.gravity -= 0.01
+    _this.vectorY += _this.gravity
+    _this.y += _this.vectorY
+    if(_this.gravity < 0) {
+      _this.gravity = 0.1
+      // _this.y = _this.offsetMinY
     }
+    // if (_this.y > _this.offsetMaxY) {
+    //   _this.y = _this.offsetMinY
+    // } else if (_this.y < _this.offsetMinY) {
+    //   _this.y = _this.offsetMaxY
+    // }
     return _this.y
   }
 
@@ -159,7 +161,7 @@
     }
 
     var canvas = document.getElementById('canvas')
-    new Particles(canvas).drawImage()
+    new Particles(canvas).downloadImage()
   }()
   </script>
 </body>
