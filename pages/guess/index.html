@@ -84,7 +84,9 @@
       var metrics = _this.ctx.measureText(text)
       var textWidth = metrics.width
 
-      return (_this.canvas.width- textWidth) / 2
+      console.log(text, textWidth, _this.width)
+
+      return (_this.width- textWidth) / 2
     }
 
     Game.prototype.drawScreen = function () {
