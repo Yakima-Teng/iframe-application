@@ -84,7 +84,7 @@
       var metrics = _this.ctx.measureText(text)
       var textWidth = metrics.width
 
-      return (_this.canvas.width- textWidth) / 2
+      return (_this.width- textWidth) / 2
     }
 
     Game.prototype.drawScreen = function () {
@@ -219,8 +219,6 @@
       _this.times = 0
       _this.lettersGuessed = []
       _this.gameStatus = 'playing'
-
-      // window.addEventListener('keyup', _this.eventKeyPressed, true)
 
       var formElement = document.getElementById('createImageData')
       formElement.style.display = 'inline-block'

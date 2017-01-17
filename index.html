@@ -21,6 +21,9 @@
   <body>
     <div class="app-main-container">
       <nav id="menuWrapper" class="app-menu-wrapper">
+        <div class="menu-toggle-wrapper">
+          <i id="btnToggleMenu" class="fa fa-list"></i>
+        </div>
         <ul class="menus">
           <li class="menu">
             <i class="fa fa-glass"></i>
@@ -29,10 +32,6 @@
           <li class="menu">
             <i class="fa fa-cog"></i>
             <span data-path="./pages/city/index.html" class="title">不重复的颜色</span>
-          </li>
-          <li class="menu">
-            <i class="fa fa-file-image-o"></i>
-            <span data-path="./pages/tree/index.html" class="title">无限嵌套的勾选树</span>
           </li>
           <li class="menu">
             <i class="fa fa-file-image-o"></i>
@@ -53,7 +52,9 @@
     <script>
       var $menuWrapper = $('#menuWrapper')
       var $appIframe = $('#appIframe')
+      var $menusWrapper = $('#menuWrapper .menus')
       var $menus = $('#menuWrapper .menu')
+      var $btnToggleMenu = $('#btnToggleMenu')
 
       $menuWrapper.on('click', '.menu', function (e) {
         var $this = $(this)
@@ -63,7 +64,11 @@
         $appIframe.prop('src', targetPath)
       })
 
-      $menus.eq(4).trigger('click')
+      $btnToggleMenu.click(function () {
+        $menusWrapper.toggleClass('show')
+      })
+
+      $menus.eq(0).trigger('click')
     </script>
   </body>
 </html>

@@ -38,23 +38,24 @@
     img.src = '../../img/pikaqiu_01.png'
 
     img.onload = function () {
-      var maxLength = Math.max(_this.canvas.width, _this.canvas.height)
+      var maxLength = Math.max(_this.width, _this.height)
       var printWidth = maxLength * 0.3
+      // 335/370是该图片的宽高比
       var printHeight = printWidth * 335 / 370
       // 让绘制到canvas上的图片位于中间位置，所需给图片左上角设定的起始坐标
-      var printX = (_this.canvas.width - printWidth) / 2
-      var printY = (_this.canvas.height - printHeight) / 2
+      var printX = (_this.width - printWidth) / 2
+      var printY = (_this.height - printHeight) / 2
       _this.ctx.drawImage(img, 0, 0, img.width, img.height, printX, printY, printWidth, printHeight)
-      var canvasData = _this.ctx.getImageData(0, 0, _this.canvas.width, _this.canvas.height)
-      // _this.saveData(canvasData)
-      setTimeout(_this.saveData.bind(_this, canvasData), 300)
+      var canvasData = _this.ctx.getImageData(0, 0, _this.width, _this.height)
+
+      setTimeout(_this.collectParticles.bind(_this, canvasData), 300)
+
+      setInterval(_this.collectParticles.bind(_this, canvasData), 6000)
     }
   }
 
-  Particles.prototype.saveData = function (canvasData) {
+  Particles.prototype.collectParticles = function (canvasData) {
     var _this = this
-
-    // var canvasData = _this.ctx.getImageData(0, 0, _this.canvas.width, _this.canvas.height)
 
     var particles = []
     var idxInDataArr = 0
@@ -64,7 +65,7 @@
       for (var j = 0; j < canvasData.height; j+=6) {
         // 计算(i, j)坐标上的像素点对应RGBA值中R值在data数组中的索引
         idxInDataArr = (j * canvasData.width + i) * 4
-        // 判断R值是否符合要求
+        // 判断透明度alpha值是否符合要求
         if (data[idxInDataArr + 3] > 50) {
           var r = data[idxInDataArr]
           var g = data[idxInDataArr + 1]
@@ -73,26 +74,31 @@
           var offsetX = i
           var offsetY = j
           var rgba = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')'
-          particles.push(new Particle(offsetX, offsetY, rgba))
+          particles.push(new Particle(offsetX / _this.pr, offsetY / _this.pr, rgba))
         }
       }
     }
 
     _this.particles = particles
 
+    var animationId
     void function loop () {
       _this.draw()
-      requestAnimationFrame(function () {
+      animationId = requestAnimationFrame(function () {
         loop()
       })
     }()
+    // 不清除掉animationId的话，因为requestAnimationFrame被不停调用，且collectParticles方法也是周期性调用，会导致没重复几次collectParticles方法页面就很卡了
+    setTimeout(function () {
+      cancelAnimationFrame(animationId)
+    }, 6000)
   }
 
   Particles.prototype.draw = function () {
     var _this = this
     var particles = _this.particles
 
-    _this.ctx.clearRect(0, 0, _this.canvas.width, _this.canvas.height)
+    _this.ctx.clearRect(0, 0, _this.width, _this.height)
 
     for (var i = 0, len = particles.length; i < len; i++) {
       var curParticle = particles[i]
@@ -106,27 +112,17 @@
   }
 
   function Particle (offsetX, offsetY, rgba) {
-    this.offsetMinX = offsetX - 20
-    this.offsetMinY = offsetY - 20
-    this.offsetMaxX = offsetX + 200
-    this.offsetMaxY = offsetY + 200
     this.x = offsetX
     this.y = offsetY
     this.rgba = rgba
     this.vectorX = (Math.random() - 0.5) * 4
     this.vectorY = -5 + (Math.random() - 0.5) * 2
     this.gravity = 0.1
-    this.birthTime = +new Date()
   }
 
   Particle.prototype.getX = function () {
     var _this = this
     _this.x += _this.vectorX
-    // if (_this.x > _this.offsetMaxX) {
-    //   _this.x = _this.offsetMinX
-    // } else if (_this.x < _this.offsetMinX) {
-    //   _this.x = _this.offsetMaxX
-    // }
     return _this.x
   }
 
@@ -137,13 +133,7 @@
     _this.y += _this.vectorY
     if(_this.gravity < 0) {
       _this.gravity = 0.1
-      // _this.y = _this.offsetMinY
     }
-    // if (_this.y > _this.offsetMaxY) {
-    //   _this.y = _this.offsetMinY
-    // } else if (_this.y < _this.offsetMinY) {
-    //   _this.y = _this.offsetMaxY
-    // }
     return _this.y
   }
 
