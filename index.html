@@ -27,19 +27,19 @@
         <ul class="menus">
           <li class="menu">
             <i class="fa fa-glass"></i>
-            <span data-path="./pages/rainbow/index.html" class="title">Vue作者博客的彩色条纹</span>
+            <span data-route-name="rainbow" class="title">Vue作者博客的彩色条纹</span>
           </li>
           <li class="menu">
             <i class="fa fa-cog"></i>
-            <span data-path="./pages/city/index.html" class="title">不重复的颜色</span>
+            <span data-route-name="city" class="title">不重复的颜色</span>
           </li>
           <li class="menu">
             <i class="fa fa-file-image-o"></i>
-            <span data-path="./pages/guess/index.html" class="title">Canvas猜字母游戏</span>
+            <span data-route-name="particles" class="title">粒子效果</span>
           </li>
           <li class="menu">
             <i class="fa fa-file-image-o"></i>
-            <span data-path="./pages/particles/index.html" class="title">粒子效果</span>
+            <span data-route-name="guess" class="title">猜字母游戏</span>
           </li>
         </ul>
       </nav>
@@ -56,19 +56,46 @@
       var $menus = $('#menuWrapper .menu')
       var $btnToggleMenu = $('#btnToggleMenu')
 
+      // 自定义路由
+      var routesConfig = {
+        rainbow: './pages/rainbow/index.html',
+        city: './pages/city/index.html',
+        guess: './pages/guess/index.html',
+        particles: './pages/particles/index.html'
+      }
+      function Route (routesConfig) {
+        this.routers = routesConfig
+      }
+      Route.prototype.go = function (options) {
+        var routeName = options.path
+        window.location.hash = '#' + routeName
+
+        var targetUrl = this.routers[routeName]
+        $appIframe.prop('src', targetUrl)
+
+        $menus.removeClass('active')
+        $menus.find('span[data-route-name=' + routeName + ']').parents('.menu').addClass('active')
+      }
+      var router = new Route(routesConfig)
+
       $menuWrapper.on('click', '.menu', function (e) {
         var $this = $(this)
-        var targetPath = $this.find('.title').data('path')
-        $menus.removeClass('active')
-        $this.addClass('active')
-        $appIframe.prop('src', targetPath)
+        var routeName = $this.find('.title').data('route-name')
+        router.go({ path: routeName })
       })
 
       $btnToggleMenu.click(function () {
         $menusWrapper.toggleClass('show')
       })
 
-      $menus.eq(0).trigger('click')
+      window.addEventListener('load', function () {
+        var hash = window.location.hash.replace('#', '')
+        if (Object.keys(routesConfig).indexOf(hash) === -1) {
+          router.go({ path: 'particles' })
+        } else {
+          router.go({ path: hash })
+        }
+      }, false)
     </script>
   </body>
 </html>
