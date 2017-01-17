@@ -38,15 +38,15 @@
     img.src = '../../img/pikaqiu_01.png'
 
     img.onload = function () {
-      var maxLength = Math.max(_this.canvas.width, _this.canvas.height)
+      var maxLength = Math.max(_this.width, _this.height)
       var printWidth = maxLength * 0.3
       // 335/370是该图片的宽高比
       var printHeight = printWidth * 335 / 370
       // 让绘制到canvas上的图片位于中间位置，所需给图片左上角设定的起始坐标
-      var printX = (_this.canvas.width - printWidth) / 2
-      var printY = (_this.canvas.height - printHeight) / 2
+      var printX = (_this.width - printWidth) / 2
+      var printY = (_this.height - printHeight) / 2
       _this.ctx.drawImage(img, 0, 0, img.width, img.height, printX, printY, printWidth, printHeight)
-      var canvasData = _this.ctx.getImageData(0, 0, _this.canvas.width, _this.canvas.height)
+      var canvasData = _this.ctx.getImageData(0, 0, _this.width, _this.height)
 
       setTimeout(_this.collectParticles.bind(_this, canvasData), 300)
 
@@ -74,7 +74,7 @@
           var offsetX = i
           var offsetY = j
           var rgba = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')'
-          particles.push(new Particle(offsetX, offsetY, rgba))
+          particles.push(new Particle(offsetX / _this.pr, offsetY / _this.pr, rgba))
         }
       }
     }
@@ -98,7 +98,7 @@
     var _this = this
     var particles = _this.particles
 
-    _this.ctx.clearRect(0, 0, _this.canvas.width, _this.canvas.height)
+    _this.ctx.clearRect(0, 0, _this.width, _this.height)
 
     for (var i = 0, len = particles.length; i < len; i++) {
       var curParticle = particles[i]

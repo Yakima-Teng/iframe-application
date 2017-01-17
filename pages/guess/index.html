@@ -84,8 +84,6 @@
       var metrics = _this.ctx.measureText(text)
       var textWidth = metrics.width
 
-      console.log(text, textWidth, _this.width)
-
       return (_this.width- textWidth) / 2
     }
 
@@ -221,8 +219,6 @@
       _this.times = 0
       _this.lettersGuessed = []
       _this.gameStatus = 'playing'
-
-      // window.addEventListener('keyup', _this.eventKeyPressed, true)
 
       var formElement = document.getElementById('createImageData')
       formElement.style.display = 'inline-block'
