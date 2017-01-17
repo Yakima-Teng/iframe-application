@@ -17,6 +17,9 @@ html, body {
   width: 200px;
   background-color: #ed5565;
   z-index: 1;
+  .menu-toggle-wrapper {
+    display: none;
+  }
   .menu {
     text-align: left;
     box-sizing: border-box;
@@ -35,7 +38,7 @@ html, body {
       display: inline-block;
       vertical-align: middle;
       font-size: 13px;
-      color: #f0f0f0
+      color: #f0f0f0;
     }
     .title {
       margin-left: 8px;
@@ -54,5 +57,57 @@ html, body {
     width: 100%;
     height: 100%;
     overflow: auto;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .app-menu-wrapper, .app-iframe-wrapper {
+    float: none;
+    min-height: unset;
+  }
+  .app-menu-wrapper {
+    width: auto;
+    .menu-toggle-wrapper {
+      display: block;
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      font-size: 0;
+      z-index: 2;
+      .fa {
+        font-size: 28px;
+        color: #da4453;
+        animation: 3000ms changeBackgroundColor linear 0ms infinite alternate;
+      }
+    }
+    .menus {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      z-index: 1;
+      transition: 300ms left linear 0ms;
+      &.show {
+        left: 0;
+      }
+    }
+  }
+  .app-iframe-wrapper {
+    width: auto;
+  }
+}
+
+@keyframes changeBackgroundColor {
+  0% {
+    color: #da4453;
+  }
+  33% {
+    color: #f00;
+  }
+  66% {
+    color: #ff0;
+  }
+  100% {
+    color: #da4453;
   }
 }

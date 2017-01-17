@@ -21,6 +21,9 @@
   <body>
     <div class="app-main-container">
       <nav id="menuWrapper" class="app-menu-wrapper">
+        <div class="menu-toggle-wrapper">
+          <i id="btnToggleMenu" class="fa fa-list"></i>
+        </div>
         <ul class="menus">
           <li class="menu">
             <i class="fa fa-glass"></i>
@@ -53,7 +56,9 @@
     <script>
       var $menuWrapper = $('#menuWrapper')
       var $appIframe = $('#appIframe')
+      var $menusWrapper = $('#menuWrapper .menus')
       var $menus = $('#menuWrapper .menu')
+      var $btnToggleMenu = $('#btnToggleMenu')
 
       $menuWrapper.on('click', '.menu', function (e) {
         var $this = $(this)
@@ -61,6 +66,10 @@
         $menus.removeClass('active')
         $this.addClass('active')
         $appIframe.prop('src', targetPath)
+      })
+
+      $btnToggleMenu.click(function () {
+        $menusWrapper.toggleClass('show')
       })
 
       $menus.eq(4).trigger('click')
