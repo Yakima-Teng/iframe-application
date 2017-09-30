@@ -6,12 +6,24 @@
   box-sizing: border-box;
   background: #fff scroll no-repeat center center;
   background-size: cover;
+  border-radius: 5%;
+  overflow: hidden;
   &:before, &:after {
     content: '';
+    z-index: 1;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    background-color: #ccc;
+  }
+  &:before {
+    width: 80%;
+    height: 10%;
+  }
+  &:after {
+    width: 10%;
+    height: 80%;
   }
   &.has-image {
     &:before, &:after {

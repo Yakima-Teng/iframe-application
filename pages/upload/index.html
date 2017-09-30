@@ -40,7 +40,6 @@
       }
 
       var file = files[0]
-      console.log(file)
       var reader = new FileReader()
       // ~~用于将字符串转化为整数，MB前的逻辑是为了保留一位小数取整，参考：https://github.com/whxaxes/node-test/issues/11
       var fileSize = file.size / 1024 > 1024 ? (~~(10 * file.size / 1024 / 1024) / 10) + 'MB' : ~~(file.size / 1024) + 'KB'
@@ -132,7 +131,9 @@
 
     // 图片上传，将base64的图片转成二进制对象，塞进formdata上传
     function upload (basestr, type) {
-      document.querySelector('.file-wrapper').style.backgroundImage = 'url(' + basestr + ')'
+      var fileWrapper = document.querySelector('.file-wrapper')
+      fileWrapper.style.backgroundImage = 'url(' + basestr + ')'
+      fileWrapper.classList.add('has-image')
       // 去除mime type，atob() 函数用来解码一个已经被base-64编码过的数据
       var text = window.atob(basestr.split(',')[1])
       var buffer = new Uint8Array(text.length)
