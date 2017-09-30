@@ -1,0 +1,33 @@
+.file-wrapper {
+  position: relative;
+  height: 120px;
+  width: 120px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  background: #fff scroll no-repeat center center;
+  background-size: cover;
+  &:before, &:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  &.has-image {
+    &:before, &:after {
+      content: normal;
+    }
+  }
+
+  .file-control {
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    // 添加下面的属性会导致不可点击
+    //visibility: hidden;
+  }
+}
